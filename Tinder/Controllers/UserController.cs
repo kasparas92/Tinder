@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tinder.API.Extensions;
 using Tinder.API.Services.Interfaces;
 using Tinder.ServiceModel.Dtos.Responses;
 
@@ -34,5 +35,18 @@ namespace Tinder.API.Controllers
             var response = _mapper.Map<UserDto>(users);
             return Ok(response);
         }
+        [HttpPut("edit")]
+        public async Task<ActionResult> UpdateUser(UserUpdateDto userUpdateDto)
+        {
+            var userId = await _userService.GetByIdAsync(User.GetUserId());
+            var result = _mapper.Map(userUpdateDto, userId);
+
+            var user = await _userService.UpdateAsync(result);
+
+            if (user)
+                return NoContent();
+            return BadRequest("Updation Failed!!");
+        }
+
     }
 }

@@ -31,5 +31,11 @@ namespace Tinder.DataModel.Repositories
                 .Include(x => x.Photos)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<bool> UpdateAsync(User user)
+        {
+            _tinderContext.Entry(user).State = EntityState.Modified;
+            return await _tinderContext.SaveChangesAsync() > 0;
+        }
     }
 }

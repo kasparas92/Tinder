@@ -8,5 +8,6 @@ namespace Tinder.DataModel.Repositories.Interfacies
     {
         Task<IEnumerable<User>> GetAllAsync();
         Task<User> GetByIdAsync(int id);
+        Task<bool> UpdateAsync(User user);
     }
 }

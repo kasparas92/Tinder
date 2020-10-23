@@ -20,6 +20,7 @@ namespace Tinder.API.Mapper
             CreateMap<User, RegisterDto>();
             CreateMap<User, UserDetailsDto>();
             CreateMap<User, LoginDto>();
+            CreateMap<User, UserUpdateDto>().ReverseMap();
         }
     }
 }

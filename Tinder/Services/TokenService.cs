@@ -22,7 +22,8 @@ namespace Tinder.API.Services
         {
             var claim = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId, user.Name)
+                new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString())
+                //new Claim(JwtRegisteredClaimNames.UniqueName, user.Name)
             };
 
             var credential = new SigningCredentials(_symmetricSecurityKey, SecurityAlgorithms.HmacSha512Signature);

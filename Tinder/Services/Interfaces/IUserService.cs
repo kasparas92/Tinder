@@ -10,5 +10,6 @@ namespace Tinder.API.Services.Interfaces
     {
         Task<IEnumerable<User>> GetAllAsync();
         Task<User> GetByIdAsync(int id);
+        Task<bool> UpdateAsync(User user);
     }
 }

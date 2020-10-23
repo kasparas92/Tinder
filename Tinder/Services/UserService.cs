@@ -24,5 +24,10 @@ namespace Tinder.API.Services
         {
             return await _userRepository.GetByIdAsync(id);
         }
+
+        public Task<bool> UpdateAsync(User user)
+        {
+            return _userRepository.UpdateAsync(user);
+        }
     }
 }

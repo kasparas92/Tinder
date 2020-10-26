@@ -28,7 +28,7 @@ namespace Tinder.API.Controllers
             {
                 return BadRequest("UserName already exists!!!");
             }
-            var user = await _accountService.Register(register.Name, register.Password, register.Gender, register.Country);
+            var user = await _accountService.Register(register);
             var userDetails = _mapper.Map<UserDetailsDto>(user);
             return Ok(userDetails);
         }

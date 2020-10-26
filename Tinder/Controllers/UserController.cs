@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -38,6 +39,14 @@ namespace Tinder.API.Controllers
         {
             var users = await _userService.GetByIdAsync(id);
             var response = _mapper.Map<UserDto>(users);
+            return Ok(response);
+        }
+        [HttpGet]
+        [Route("GetByGender/{gender}")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetByGenderAsync(string gender)
+        {
+            var users = await _userService.GetByGenderAsync(gender);
+            var response = _mapper.Map<IEnumerable<UserDto>>(users);
             return Ok(response);
         }
         [HttpPut("edit")]
@@ -79,6 +88,56 @@ namespace Tinder.API.Controllers
                 return CreatedAtRoute("GetUser", new { id = user.Id }, _mapper.Map<PhotoDto>(photo));
             }
             return BadRequest("Upload failed");
+        }
+        [HttpDelete("delete-photos/{id}")]
+        public async Task<ActionResult> DeletePhotoAsync(int id)
+        {
+            var user = await _userService.GetByIdAsync(User.GetUserId());
+            var photo = user.Photos.FirstOrDefault(p => p.Id == id);
+            if(photo == null)
+            {
+                return NotFound();
+            }
+            else if(photo.IsMain)
+            {
+                return BadRequest("You can't delete Main Photo");
+            }
+            else if(photo.PublicId != null)
+            {
+                var response = await _photoService.DeletePhotoAsync(photo.PublicId);
+                if(response.Error != null)
+                {
+                    return BadRequest(response.Error.Message);
+                }
+            }
+
+            user.Photos.Remove(photo);
+            if (await _userService.UpdateAsync(user))
+            {
+                return Ok();
+            }
+            return BadRequest("Failed to Delete Photo!!!!!!!!!!!!!!");
+        }
+        [HttpPut("set-main-photo/{id}")]
+        public async Task<ActionResult> SetMainPhoto(int id)
+        {
+            var user = await _userService.GetByIdAsync(User.GetUserId());
+            var photo = user.Photos.FirstOrDefault(p => p.Id == id);
+            if (photo.IsMain)
+            {
+                return BadRequest("This is already IsMain");
+            }
+            var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
+            if(currentMain != null)
+            {
+                currentMain.IsMain = false;
+            }
+            photo.IsMain = true;
+            if (await _userService.UpdateAsync(user))
+            {
+                return NoContent();
+            }
+            return BadRequest("Seting photo to main is failed!!!!");
         }
     }
 }

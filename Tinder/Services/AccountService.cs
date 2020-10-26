@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Tinder.API.Services.Interfaces;
 using Tinder.DataModel.Entities;
 using Tinder.DataModel.Repositories.Interfacies;
+using Tinder.ServiceModel.Dtos.Requests;
 
 namespace Tinder.API.Services
 {
@@ -27,17 +28,19 @@ namespace Tinder.API.Services
             return await _accountRepository.Login(name, password);
         }
 
-        public async Task<User> Register(string name, string password, string gender, string country)
+        public async Task<User> Register(RegisterDto register)
         {
             byte[] passwordHash, passwordSalt;
-            CreatePasswordHash(password, out passwordHash, out passwordSalt);
+            CreatePasswordHash(register.Password, out passwordHash, out passwordSalt);
             var user = new User
             {
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                Country = country,
-                Gender = gender,
-                Name = name.ToLower()
+                Country = register.Country,
+                Gender = register.Gender,
+                DateofBirth = register.DateOfBirth,
+                KnowAs = register.KnownAs,
+                Name = register.Name.ToLower()
             };
             
             return await _accountRepository.Register(user);

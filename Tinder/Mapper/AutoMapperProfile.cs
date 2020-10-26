@@ -19,7 +19,7 @@ namespace Tinder.API.Mapper
                         src.Photos.FirstOrDefault(x => x.IsMain).Url)).ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.DateofBirth.Age()));
             CreateMap<User, RegisterDto>();
             CreateMap<User, UserDetailsDto>();
-            CreateMap<User, LoginDto>();
+            CreateMap<User, LoginDto>().ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.Photos.FirstOrDefault(x => x.IsMain).Url));
             CreateMap<User, UserUpdateDto>().ReverseMap();
         }
     }

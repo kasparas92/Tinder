@@ -20,6 +20,11 @@ namespace Tinder.API.Services
             return await _userRepository.GetAllAsync();
         }
 
+        public async Task<IEnumerable<User>> GetByGenderAsync(string gender)
+        {
+            return await _userRepository.GetByGenderAsync(gender);
+        }
+
         public async Task<User> GetByIdAsync(int id)
         {
             return await _userRepository.GetByIdAsync(id);

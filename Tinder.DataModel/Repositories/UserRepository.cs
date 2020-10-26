@@ -24,6 +24,14 @@ namespace Tinder.DataModel.Repositories
                 .ToListAsync(); ;
         }
 
+        public async Task<IEnumerable<User>> GetByGenderAsync(string gender)
+        {
+            return await _tinderContext.User
+                .Where(x => x.Gender == gender)
+                .Include(x => x.Photos)
+                .ToListAsync();
+        }
+
         public async Task<User> GetByIdAsync(int id)
         {
             return await _tinderContext.User

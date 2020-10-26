@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Tinder.API.Extensions;
 using Tinder.API.Services.Interfaces;
+using Tinder.DataModel.Entities;
 using Tinder.ServiceModel.Dtos.Responses;
 
 namespace Tinder.API.Controllers
@@ -16,10 +19,12 @@ namespace Tinder.API.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public UserController(IUserService userService, IMapper mapper)
+        private readonly IPhotoService _photoService;
+        public UserController(IUserService userService, IMapper mapper, IPhotoService photoService)
         {
             _userService = userService;
             _mapper = mapper;
+            _photoService = photoService;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAllAsync()
@@ -28,7 +33,7 @@ namespace Tinder.API.Controllers
             var response = _mapper.Map<IEnumerable<UserDto>>(users);
             return Ok(response);
         }
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetUser")]
         public async Task<ActionResult<UserDto>> GetByIdAsync(int id)
         {
             var users = await _userService.GetByIdAsync(id);
@@ -47,6 +52,33 @@ namespace Tinder.API.Controllers
                 return NoContent();
             return BadRequest("Updation Failed!!");
         }
+        [HttpPost("add-photo")]
+        public async Task<ActionResult<PhotoDto>> AddPhotoAsync(IFormFile formFile)
+        {
+            var user = await _userService.GetByIdAsync(User.GetUserId());
+            var response = await _photoService.AddPhotoAsync(formFile);
+            if (response == null)
+            {
+                return BadRequest(response.Error.Message);
+            }
 
+            var photo = new Photo
+            {
+                Url = response.SecureUrl.AbsoluteUri,
+                PublicId = response.PublicId
+            };
+
+            if(user.Photos.Count == 0)
+            {
+                photo.IsMain = true;
+            }
+            user.Photos.Add(photo);
+
+            if(await _userService.UpdateAsync(user))
+            {
+                return CreatedAtRoute("GetUser", new { id = user.Id }, _mapper.Map<PhotoDto>(photo));
+            }
+            return BadRequest("Upload failed");
+        }
     }
 }

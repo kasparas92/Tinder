@@ -29,6 +29,8 @@ namespace Tinder.API.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IPhotoRepository, PhotoRepository>();
             services.AddScoped<IPhotoService, PhotoService>();
+            services.AddScoped<ILikeRepository, LikeRepository>();
+            services.AddScoped<ILikeService, LikeService>();
             services.AddAutoMapper(typeof(AutoMapperProfile));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(o => o.TokenValidationParameters = new TokenValidationParameters

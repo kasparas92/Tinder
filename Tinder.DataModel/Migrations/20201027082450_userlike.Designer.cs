@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tinder.DataModel.Context;
 
 namespace Tinder.DataModel.Migrations
 {
     [DbContext(typeof(TinderContext))]
-    partial class TinderContextModelSnapshot : ModelSnapshot
+    [Migration("20201027082450_userlike")]
+    partial class userlike
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

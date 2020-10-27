@@ -30,6 +30,7 @@ namespace Tinder.API.Controllers
             }
             var user = await _accountService.Register(register);
             var userDetails = _mapper.Map<UserDetailsDto>(user);
+            userDetails.Token = _tokenService.CreateToken(user);
             return Ok(userDetails);
         }
         [HttpPost("login")]
